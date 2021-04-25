@@ -26,7 +26,7 @@ right = False
 walk_count = 0
 
 is_jump = False
-jump_count = 10
+jump_count = 5 
 
 def redraw_game_window():
     global walk_count 
@@ -88,15 +88,15 @@ while run:
             left = False
             walk_count = 0
     else:
-        if jump_count >= -10:
+        if jump_count >= -5:
             neg = 1
             if jump_count < 0:
                 neg = -1
-            y_center -= (jump_count ** 2) * 0.5 * neg #multiplier to slow down the jump
+            y_center -= (jump_count ** 2) * neg 
             jump_count -= 1
         else:
             is_jump = False
-            jump_count = 10
+            jump_count = 5 
     
     redraw_game_window()
         
