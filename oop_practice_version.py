@@ -54,8 +54,6 @@ class Player(object):
             game_window.blit(character, (self.x_coord, self.y_coord))
             self.walk_count += 1
 
-
-
 def redraw_game_window():
     """Primary method to redraw the game window at the end of each Main Loop iteration."""
     GAME_WINDOW.blit(background, (0,0))
@@ -65,7 +63,7 @@ def redraw_game_window():
 sprite_1 = Player(GAME_WINDOW_CENTER, GAME_WINDOW_BOTTOM, 64, 64)
 
 #MAIN GAME LOOP
-def game_loop():
+def main_game_loop():
     """Runs the main game loop, looking for input from the user."""
     run = True
     while run:
@@ -117,7 +115,7 @@ def game_loop():
     pygame.quit()
 
 if __name__ == '__main__':
-    game_loop()
+    main_game_loop()
 
 """
     "python.linting.pylintArgs":[
