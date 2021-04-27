@@ -22,7 +22,7 @@ pygame.image.load('images/L5.png'), pygame.image.load('images/L6.png'),
 pygame.image.load('images/L7.png'), pygame.image.load('images/L8.png'),
 pygame.image.load('images/L9.png')]
 background = pygame.image.load('images/bg.jpg')
-character = pygame.image.load('images/standing.png')
+standing = pygame.image.load('images/standing.png')
 
 clock = pygame.time.Clock()
 
@@ -39,64 +39,92 @@ class Player(object):
         self.right = False
         self.left = False
         self.walk_count = 0
+        self.standing = True
 
     def draw(self, game_window):
         """Player class method for re-drawing the sprite on the game_window surface."""
         if self.walk_count + 1 >= 27:
             self.walk_count = 0
-        if self.left:
-            game_window.blit(walk_left[self.walk_count//3], (self.x_coord, self.y_coord))
-            self.walk_count += 1
-        elif self.right:
-            game_window.blit(walk_right[self.walk_count//3], (self.x_coord, self.y_coord))
-            self.walk_count += 1
+        if not self.standing:
+            if self.left:
+                game_window.blit(walk_left[self.walk_count//3], (self.x_coord, self.y_coord))
+                self.walk_count += 1
+            elif self.right:
+                game_window.blit(walk_right[self.walk_count//3], (self.x_coord, self.y_coord))
+                self.walk_count += 1
         else:
-            game_window.blit(character, (self.x_coord, self.y_coord))
-            self.walk_count += 1
+            if self.right:
+                game_window.blit(walk_right[0], (self.x_coord, self.y_coord))
+            else:
+                game_window.blit(walk_left[0], (self.x_coord, self.y_coord))
+
+class Projectile(object):
+    """Class for drawing projctiles that will originate at a particular character."""
+    def __init__(self, x, y, radius, color, facing):
+        self.x_coord = x
+        self.y_coord = y
+        self.radius = radius
+        self.color = color
+        self.facing = facing
+        self.velocity = 8 * facing
+
+    def draw(self, game_window):
+        """Method for creating an instance of a projectile."""
+        pygame.draw.circle(game_window, self.color, (self.x_coord, self.y_coord), self.radius)
 
 def redraw_game_window():
     """Primary method to redraw the game window at the end of each Main Loop iteration."""
     GAME_WINDOW.blit(background, (0,0))
     sprite_1.draw(GAME_WINDOW)
+    for bullet in bullets:
+        bullet.draw(GAME_WINDOW)
     pygame.display.update()
 
 sprite_1 = Player(GAME_WINDOW_CENTER, GAME_WINDOW_BOTTOM, 64, 64)
-
+bullets = [] #list for keeping track of all bullet sprites
 #MAIN GAME LOOP
 def main_game_loop():
     """Runs the main game loop, looking for input from the user."""
     run = True
     while run:
-        #pygame.time.delay(game_delay)
         clock.tick(GAME_DELAY)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+
+        for bullet in bullets:
+            if bullet.x_coord < 500 and bullet.x_coord > 0:
+                bullet.x_coord += bullet.velocity
+            else:
+                bullets.pop(bullets.index(bullet))
+
         keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_SPACE]:
+            if sprite_1.left:
+                facing = -1
+            else:
+                facing = 1
+            if len(bullets) < 7:
+                bullets.append(Projectile(round(sprite_1.x_coord + sprite_1.width//2), round(sprite_1.y_coord + sprite_1.height//2), 6, (0,0,0), facing))
 
         if keys[pygame.K_LEFT] and sprite_1.x_coord > sprite_1.velocity:
             sprite_1.x_coord -= sprite_1.velocity
             sprite_1.right = False
             sprite_1.left = True
+            sprite_1.standing = False
         elif keys[pygame.K_RIGHT] and sprite_1.x_coord < (GAME_WINDOW_X - sprite_1.width - sprite_1.velocity):
             sprite_1.x_coord += sprite_1.velocity
             sprite_1.right = True
             sprite_1.left = False
+            sprite_1.standing = False
         else:
-            sprite_1.right = False
-            sprite_1.left = False
+            sprite_1.standing = True
             sprite_1.walk_count = 0
 
         if not sprite_1.is_jump:
-    #code has been commented out that would allow vertical movement of the character
-    #        if keys[pygame.K_UP] and y > velocity:
-    #            y -= velocity
-    #
-    #        if keys[pygame.K_DOWN] and y < (game_window_y - height - velocity):
-    #            y += velocity
-    #
-            if keys[pygame.K_SPACE]:
+            if keys[pygame.K_UP]:
                 sprite_1.is_jump = True
                 sprite_1.right = False
                 sprite_1.left = False
