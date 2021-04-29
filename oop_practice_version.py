@@ -1,33 +1,28 @@
 import pygame
+from game_variables import *
 
 pygame.init()
 
-GAME_WINDOW_X = 500
-GAME_WINDOW_CENTER = GAME_WINDOW_X/2
-GAME_WINDOW_Y = 480
-GAME_WINDOW_BOTTOM = GAME_WINDOW_Y - 64
-GAME_WINDOW = pygame.display.set_mode((GAME_WINDOW_X, GAME_WINDOW_Y))
-GAME_DELAY = 27
 pygame.display.set_caption("Change This Title Later")
-
-walk_right = [pygame.image.load('images/R1.png'), pygame.image.load('images/R2.png'),
-pygame.image.load('images/R3.png'), pygame.image.load('images/R4.png'),
-pygame.image.load('images/R5.png'), pygame.image.load('images/R6.png'),
-pygame.image.load('images/R7.png'), pygame.image.load('images/R8.png'),
-pygame.image.load('images/R9.png')]
-
-walk_left = [pygame.image.load('images/L1.png'), pygame.image.load('images/L2.png'),
-pygame.image.load('images/L3.png'), pygame.image.load('images/L4.png'),
-pygame.image.load('images/L5.png'), pygame.image.load('images/L6.png'),
-pygame.image.load('images/L7.png'), pygame.image.load('images/L8.png'),
-pygame.image.load('images/L9.png')]
-background = pygame.image.load('images/bg.jpg')
-standing = pygame.image.load('images/standing.png')
 
 clock = pygame.time.Clock()
 
 class Player(object):
     """Player sprite class."""
+    #walk_right is a list of pygame images for the sprite walking to the right
+    walk_right = [pygame.image.load('images/R1.png'), pygame.image.load('images/R2.png'),
+    pygame.image.load('images/R3.png'), pygame.image.load('images/R4.png'),
+    pygame.image.load('images/R5.png'), pygame.image.load('images/R6.png'),
+    pygame.image.load('images/R7.png'), pygame.image.load('images/R8.png'),
+    pygame.image.load('images/R9.png')]
+
+    #walk_left is a list of pygame images for the sprite walking to the left
+    walk_left = [pygame.image.load('images/L1.png'), pygame.image.load('images/L2.png'),
+    pygame.image.load('images/L3.png'), pygame.image.load('images/L4.png'),
+    pygame.image.load('images/L5.png'), pygame.image.load('images/L6.png'),
+    pygame.image.load('images/L7.png'), pygame.image.load('images/L8.png'),
+    pygame.image.load('images/L9.png')]
+
     def __init__(self, x, y, width, height):
         self.x_coord = x
         self.y_coord = y
@@ -47,16 +42,72 @@ class Player(object):
             self.walk_count = 0
         if not self.standing:
             if self.left:
-                game_window.blit(walk_left[self.walk_count//3], (self.x_coord, self.y_coord))
+                game_window.blit(self.walk_left[self.walk_count//3], (self.x_coord, self.y_coord))
                 self.walk_count += 1
             elif self.right:
-                game_window.blit(walk_right[self.walk_count//3], (self.x_coord, self.y_coord))
+                game_window.blit(self.walk_right[self.walk_count//3], (self.x_coord, self.y_coord))
                 self.walk_count += 1
         else:
             if self.right:
-                game_window.blit(walk_right[0], (self.x_coord, self.y_coord))
+                game_window.blit(self.walk_right[0], (self.x_coord, self.y_coord))
             else:
-                game_window.blit(walk_left[0], (self.x_coord, self.y_coord))
+                game_window.blit(self.walk_left[0], (self.x_coord, self.y_coord))
+
+class Enemy(object):
+    """Class for creating instances of enemy sprites."""
+    walk_right = [pygame.image.load('images/R1E.png'), pygame.image.load('images/R2E.png'), 
+    pygame.image.load('images/R3E.png'), pygame.image.load('images/R4E.png'), 
+    pygame.image.load('images/R5E.png'), pygame.image.load('images/R6E.png'), 
+    pygame.image.load('images/R7E.png'), pygame.image.load('images/R8E.png'), 
+    pygame.image.load('images/R9E.png'), pygame.image.load('images/R10E.png'), 
+    pygame.image.load('images/R11E.png')]
+
+    walk_left= [pygame.image.load('images/L1E.png'), pygame.image.load('images/L2E.png'), 
+    pygame.image.load('images/L3E.png'), pygame.image.load('images/L4E.png'), 
+    pygame.image.load('images/L5E.png'), pygame.image.load('images/L6E.png'), 
+    pygame.image.load('images/L7E.png'), pygame.image.load('images/L8E.png'), 
+    pygame.image.load('images/L9E.png'), pygame.image.load('images/L10E.png'), 
+    pygame.image.load('images/L11E.png')]
+
+    def __init__(self, x, y, width, height, end):
+        self.x_coord = x
+        self.y_coord = y
+        self.width = width
+        self.height = height
+        self.end = end
+        self.path = [self.x_coord, self.end]
+        self.walk_count = 0
+        self.velocity = 3
+
+    def draw(self, GAME_WINDOW):
+        self.move()
+        if self.walk_count + 1 <= 33:
+            self.walk_count = 0
+
+        if self.velocity > 0: #means the sprite is moving right
+            #.blit() requires an image and then a set of x,y coordinates
+            GAME_WINDOW.blit(self.walk_right[self.walk_count//3], (self.x_coord, self.y_coord))
+            self.walk_count += 1
+        else: #means the sprite is moving to the left
+            GAME_WINDOW.blit(self.walk_left[self.walk_count//3], (self.x_coord, self.y_coord))
+            self.walk_count += 1
+        print(self.walk_count)
+    
+    def move(self):
+        if self.velocity > 0: #indicates the character is moving to the right
+            if self.x_coord + self.velocity < self.path[1]: #checks if character is past end coordinate
+                self.x_coord += self.velocity
+            else:
+                self.velocity *= -1
+                #self.walk_count = 0
+                self.x_coord += self.velocity
+        else:
+            if self.x_coord - self.velocity > self.path[0]: #checks if character past initial x coordinate
+                self.x_coord += self.velocity
+            else:
+                self.velocity *= -1
+                #self.walk_count = 0
+                self.x_coord += self.velocity
 
 class Projectile(object):
     """Class for drawing projctiles that will originate at a particular character."""
@@ -75,12 +126,18 @@ class Projectile(object):
 def redraw_game_window():
     """Primary method to redraw the game window at the end of each Main Loop iteration."""
     GAME_WINDOW.blit(background, (0,0))
-    sprite_1.draw(GAME_WINDOW)
+    hero.draw(GAME_WINDOW)
+    goblin.draw(GAME_WINDOW)
     for bullet in bullets:
         bullet.draw(GAME_WINDOW)
     pygame.display.update()
 
-sprite_1 = Player(GAME_WINDOW_CENTER, GAME_WINDOW_BOTTOM, 64, 64)
+#first instance of a player sprite, requires x,y coordinates and a width,height
+hero = Player(GAME_WINDOW_CENTER, GAME_WINDOW_BOTTOM, 64, 64)
+
+#first instance of an enemy sprite
+goblin = Enemy(GAME_WINDOW_CENTER - 100, GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_CENTER + 100)
+
 bullets = [] #list for keeping track of all bullet sprites
 #MAIN GAME LOOP
 def main_game_loop():
@@ -102,50 +159,46 @@ def main_game_loop():
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_SPACE]:
-            if sprite_1.left:
+            if hero.left:
                 facing = -1
             else:
                 facing = 1
             if len(bullets) < 7:
-                bullets.append(Projectile(round(sprite_1.x_coord + sprite_1.width//2), round(sprite_1.y_coord + sprite_1.height//2), 6, (0,0,0), facing))
+                bullets.append(Projectile(round(hero.x_coord + hero.width//2), 
+                round(hero.y_coord + hero.height//2), PROJECTILE_DIAMETER, (153,0,0), facing))
 
-        if keys[pygame.K_LEFT] and sprite_1.x_coord > sprite_1.velocity:
-            sprite_1.x_coord -= sprite_1.velocity
-            sprite_1.right = False
-            sprite_1.left = True
-            sprite_1.standing = False
-        elif keys[pygame.K_RIGHT] and sprite_1.x_coord < (GAME_WINDOW_X - sprite_1.width - sprite_1.velocity):
-            sprite_1.x_coord += sprite_1.velocity
-            sprite_1.right = True
-            sprite_1.left = False
-            sprite_1.standing = False
+        if keys[pygame.K_LEFT] and hero.x_coord > hero.velocity:
+            hero.x_coord -= hero.velocity
+            hero.right = False
+            hero.left = True
+            hero.standing = False
+        elif keys[pygame.K_RIGHT] and hero.x_coord < (GAME_WINDOW_X - hero.width - hero.velocity):
+            hero.x_coord += hero.velocity
+            hero.right = True
+            hero.left = False
+            hero.standing = False
         else:
-            sprite_1.standing = True
-            sprite_1.walk_count = 0
+            hero.standing = True
+            hero.walk_count = 0
 
-        if not sprite_1.is_jump:
+        if not hero.is_jump:
             if keys[pygame.K_UP]:
-                sprite_1.is_jump = True
-                sprite_1.right = False
-                sprite_1.left = False
-                sprite_1.walk_count = 0
+                hero.is_jump = True
+                hero.right = False
+                hero.left = False
+                hero.walk_count = 0
         else:
-            if sprite_1.jump_count >= -7:
+            if hero.jump_count >= -7:
                 neg = 1
-                if sprite_1.jump_count < 0:
+                if hero.jump_count < 0:
                     neg = -1
-                sprite_1.y_coord -= (sprite_1.jump_count ** 2) * neg
-                sprite_1.jump_count -= 1
+                hero.y_coord -= (hero.jump_count ** 2) * neg
+                hero.jump_count -= 1
             else:
-                sprite_1.is_jump = False
-                sprite_1.jump_count = 7
+                hero.is_jump = False
+                hero.jump_count = 7
         redraw_game_window()
     pygame.quit()
 
 if __name__ == '__main__':
     main_game_loop()
-
-"""
-    "python.linting.pylintArgs":[
-        "--extension-pkg-whitelist=pygame"
-"""
