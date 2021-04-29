@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 from game_variables import *
 
 pygame.init()
@@ -69,19 +69,19 @@ class Enemy(object):
     pygame.image.load('images/L9E.png'), pygame.image.load('images/L10E.png'), 
     pygame.image.load('images/L11E.png')]
 
-    def __init__(self, x, y, width, height, end):
+    def __init__(self, x, y, width, height, end, walk_count):
         self.x_coord = x
         self.y_coord = y
         self.width = width
         self.height = height
         self.end = end
-        self.path = [self.x_coord, self.end]
-        self.walk_count = 0
-        self.velocity = 3
+        self.path = [-32, GAME_WINDOW_X - 32]
+        self.walk_count = walk_count
+        self.velocity = random.randint(3, 6)
 
     def draw(self, GAME_WINDOW):
         self.move()
-        if self.walk_count + 1 <= 33:
+        if self.walk_count + 1 >= 33:
             self.walk_count = 0
 
         if self.velocity > 0: #means the sprite is moving right
@@ -91,23 +91,18 @@ class Enemy(object):
         else: #means the sprite is moving to the left
             GAME_WINDOW.blit(self.walk_left[self.walk_count//3], (self.x_coord, self.y_coord))
             self.walk_count += 1
-        print(self.walk_count)
     
     def move(self):
         if self.velocity > 0: #indicates the character is moving to the right
             if self.x_coord + self.velocity < self.path[1]: #checks if character is past end coordinate
                 self.x_coord += self.velocity
             else:
-                self.velocity *= -1
-                #self.walk_count = 0
-                self.x_coord += self.velocity
+                self.velocity *= -1 #reverses the direction of travel
         else:
             if self.x_coord - self.velocity > self.path[0]: #checks if character past initial x coordinate
                 self.x_coord += self.velocity
             else:
-                self.velocity *= -1
-                #self.walk_count = 0
-                self.x_coord += self.velocity
+                self.velocity *= -1 #reverses the direction of travel
 
 class Projectile(object):
     """Class for drawing projctiles that will originate at a particular character."""
@@ -128,6 +123,8 @@ def redraw_game_window():
     GAME_WINDOW.blit(background, (0,0))
     hero.draw(GAME_WINDOW)
     goblin.draw(GAME_WINDOW)
+    goblin2.draw(GAME_WINDOW)
+    goblin3.draw(GAME_WINDOW)
     for bullet in bullets:
         bullet.draw(GAME_WINDOW)
     pygame.display.update()
@@ -136,7 +133,9 @@ def redraw_game_window():
 hero = Player(GAME_WINDOW_CENTER, GAME_WINDOW_BOTTOM, 64, 64)
 
 #first instance of an enemy sprite
-goblin = Enemy(GAME_WINDOW_CENTER - 100, GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_CENTER + 100)
+goblin = Enemy(random.randint(32, GAME_WINDOW_X - 64), GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_X - 32, random.randint(0, 33))
+goblin2 = Enemy(random.randint(32, GAME_WINDOW_X - 64), GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_X - 32, random.randint(0, 33))
+goblin3 = Enemy(random.randint(32, GAME_WINDOW_X - 64), GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_X - 32, random.randint(0, 33))
 
 bullets = [] #list for keeping track of all bullet sprites
 #MAIN GAME LOOP
