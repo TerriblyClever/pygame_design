@@ -10,7 +10,6 @@ pygame.display.set_caption("Change This Title Later")
 
 clock = pygame.time.Clock()
 
-
 def redraw_game_window():
     """Primary method to redraw the game window at the end of each Main Loop iteration."""
     GAME_WINDOW.blit(background, (0,0))
@@ -30,6 +29,7 @@ goblin = Enemy(random.randint(32, GAME_WINDOW_X - 64), GAME_WINDOW_BOTTOM, 64, 6
 goblin2 = Enemy(random.randint(32, GAME_WINDOW_X - 64), GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_X - 32, random.randint(0, 33))
 goblin3 = Enemy(random.randint(32, GAME_WINDOW_X - 64), GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_X - 32, random.randint(0, 33))
 
+#collection of instances from the Projectile class
 bullets = [] #list for keeping track of all bullet sprites
 #MAIN GAME LOOP
 def main_game_loop():
@@ -43,6 +43,11 @@ def main_game_loop():
                 run = False
 
         for bullet in bullets:
+            if (bullet.y_coord - bullet.radius < goblin.hitbox[1] + goblin.hitbox[3] and 
+                bullet.y_coord + bullet.radius > goblin.hitbox[1]):
+                if (bullet.x_coord + bullet.radius > goblin.hitbox[0] and
+                    bullet.x_coord - bullet.radius < goblin.hitbox[0] + goblin.hitbox[2]):
+                    goblin.hit()
             if bullet.x_coord < 500 and bullet.x_coord > 0:
                 bullet.x_coord += bullet.velocity
             else:

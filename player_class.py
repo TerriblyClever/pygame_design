@@ -28,6 +28,7 @@ class Player(object):
         self.left = False
         self.walk_count = 0
         self.standing = True
+        self.hitbox = (self.x_coord + 17, self.y_coord + 11, 26, 57)
 
     def draw(self, game_window):
         """Player class method for re-drawing the sprite on the game_window surface."""
@@ -45,3 +46,7 @@ class Player(object):
                 game_window.blit(self.walk_right[0], (self.x_coord, self.y_coord))
             else:
                 game_window.blit(self.walk_left[0], (self.x_coord, self.y_coord))
+        #redefining the dimensions of the hitbox based on the current location of the player sprite
+        self.hitbox = (self.x_coord + 17, self.y_coord + 11, 26, 57)
+        #draw the hitbox as a rectangle in the game window, around the player (WHHS Red)
+        pygame.draw.rect(game_window, (153,0,0), self.hitbox, 2)

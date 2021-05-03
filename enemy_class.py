@@ -26,8 +26,9 @@ class Enemy(object):
         self.path = [-32, GAME_WINDOW_X - 32]
         self.walk_count = walk_count
         self.velocity = random.randint(3, 6)
+        self.hitbox = (self.x_coord + 20, self.y_coord, 28, 60)
 
-    def draw(self, GAME_WINDOW):
+    def draw(self, game_window):
         self.move()
         if self.walk_count + 1 >= 33:
             self.walk_count = 0
@@ -39,6 +40,10 @@ class Enemy(object):
         else: #means the sprite is moving to the left
             GAME_WINDOW.blit(self.walk_left[self.walk_count//3], (self.x_coord, self.y_coord))
             self.walk_count += 1
+        #redefining the dimensions of the hitbox based on the current location of the player sprite
+        self.hitbox = (self.x_coord + 20, self.y_coord, 28, 60) 
+        #draw the hitbox as a rectangle in the game window, around the player (WHHS Red)
+        pygame.draw.rect(game_window, (153,0,0), self.hitbox, 2)
     
     def move(self):
         if self.velocity > 0: #indicates the character is moving to the right
@@ -51,3 +56,6 @@ class Enemy(object):
                 self.x_coord += self.velocity
             else:
                 self.velocity *= -1 #reverses the direction of travel
+
+    def hit(self):
+        print("Hit! You sunk my battleship...")
