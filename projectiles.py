@@ -4,7 +4,9 @@ game_window_x = 500
 game_window_y = 500
 game_window = pygame.display.set_mode((game_window_x, game_window_y))
 
-class bullet(object):
+bullet_y_coord_spawn = 400
+
+class Bullet(object):
     """Class for creating multiple bullet instances."""
 
     def __init__(self, x, y, color, radius):
@@ -19,17 +21,9 @@ class bullet(object):
     def draw(self, game_window):
         pygame.draw.circle(game_window, self.color, (self.x_coord, self.y_coord), self.radius)
 
-
-
-ball_x = 250
-ball_y = 250
-ball_radius = 10
-ball_velocity = 5
-
-ball_right = True
-ball_left = False
-
 clock = pygame.time.Clock()
+
+bullets_list = []
 
 run = True
 while run:
@@ -41,21 +35,22 @@ while run:
     
     game_window.fill((255,255,255))
 
-    if ball_x >= 490:
-        ball_right = False
-        ball_left = True
-    elif ball_x <= 10: 
-        ball_right = True 
-        ball_left = False 
+    keys = pygame.key.get_pressed()
 
-    if ball_x < game_window_x - ball_radius and ball_right:
-        #requires 4 arguments: the surface, a color RGB tuple, (x,y) coordinates, and a radius
-        pygame.draw.circle(game_window, (0,0,0), (ball_x, ball_y), ball_radius)
-        ball_x += ball_velocity
-    elif ball_x > 0 and ball_left:
-        pygame.draw.circle(game_window, (0,0,0), (ball_x, ball_y), ball_radius)
-        ball_x -= ball_velocity
+    if keys[pygame.K_SPACE]:
+        bullets_list.append(Bullet(100, bullet_y_coord_spawn, (0,0,255), 10))
+    if keys[pygame.K_UP]:
+        bullet_y_coord_spawn -= item.velocity
+    if keys[pygame.K_DOWN]:
+        bullet_y_coord_spawn += item.velocity
+    
+    for item in bullets_list:
+        item.x_coord += item.velocity
+        item.draw(game_window)
+        if item.x_coord > game_window_x:
+            bullets_list.pop(bullets_list.index(item))
 
     pygame.display.update()
+    print(bullets_list)
 
 pygame.quit()

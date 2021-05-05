@@ -13,7 +13,7 @@ x_center = game_window_x/2
 y_center = game_window_y - 100
 height = 64 #variables for the height of a rectangle sprite
 width = 64 #width of the rectangle sprite
-velocity = 5
+velocity = 5 #the number of pixels to move by each game loop
 game_delay = 27 #equates to a frame rate per second for now
 
 is_jump = False #Boolean to detect whether the sprite is in a jump
@@ -22,7 +22,8 @@ jump_count = 5 #controls the height of your jump
 def redraw_game_window(): #created a function to update the game window
     #code commented out that was used to animate the red rectangle
     game_window.fill((0,0,0)) #redraw black where the rectangle used to be
-    pygame.draw.rect(game_window, (255, 0, 0), (x_center, y_center, width, height))
+    #draw.rect takes 3 arguments: where to draw the rect, rgb colors to draw, a 4-tuple of x-loc,y-loc,width,height
+    pygame.draw.rect(game_window, (153, 0, 0), (x_center, y_center, width, height))
     pygame.display.update()
 
 #MAIN GAME LOOP

@@ -14,9 +14,8 @@ def redraw_game_window():
     """Primary method to redraw the game window at the end of each Main Loop iteration."""
     GAME_WINDOW.blit(background, (0,0))
     hero.draw(GAME_WINDOW)
-    goblin.draw(GAME_WINDOW)
-    goblin2.draw(GAME_WINDOW)
-    goblin3.draw(GAME_WINDOW)
+    for enemy in enemy_list:
+        enemy.draw(GAME_WINDOW)
     for bullet in bullets:
         bullet.draw(GAME_WINDOW)
     pygame.display.update()
@@ -25,9 +24,9 @@ def redraw_game_window():
 hero = Player(GAME_WINDOW_CENTER, GAME_WINDOW_BOTTOM, 64, 64)
 
 #first instances of an enemy sprite
-goblin = Enemy(random.randint(32, GAME_WINDOW_X - 64), GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_X - 32, random.randint(0, 33))
-goblin2 = Enemy(random.randint(32, GAME_WINDOW_X - 64), GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_X - 32, random.randint(0, 33))
-goblin3 = Enemy(random.randint(32, GAME_WINDOW_X - 64), GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_X - 32, random.randint(0, 33))
+enemy_list = []
+for i in range(20):
+    enemy_list.append(Enemy(random.randint(32, GAME_WINDOW_X - 64), GAME_WINDOW_BOTTOM, 64, 64, GAME_WINDOW_X - 32, random.randint(0, 33)))
 
 #collection of instances from the Projectile class
 bullets = [] #list for keeping track of all bullet sprites
@@ -43,11 +42,13 @@ def main_game_loop():
                 run = False
 
         for bullet in bullets:
+            """
             if (bullet.y_coord - bullet.radius < goblin.hitbox[1] + goblin.hitbox[3] and 
                 bullet.y_coord + bullet.radius > goblin.hitbox[1]):
                 if (bullet.x_coord + bullet.radius > goblin.hitbox[0] and
                     bullet.x_coord - bullet.radius < goblin.hitbox[0] + goblin.hitbox[2]):
                     goblin.hit()
+            """
             if bullet.x_coord < 500 and bullet.x_coord > 0:
                 bullet.x_coord += bullet.velocity
             else:
