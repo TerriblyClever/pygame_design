@@ -12,3 +12,7 @@ PROJECTILE_DIAMETER = 3
 background = pygame.image.load('images/bg.jpg')
 
 standing = pygame.image.load('images/standing.png')
+
+shooting = False
+score = 0
+#print(pygame.font.get_fonts())
