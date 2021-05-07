@@ -13,6 +13,8 @@ clock = pygame.time.Clock()
 def redraw_game_window():
     """Primary method to redraw the game window at the end of each Main Loop iteration."""
     GAME_WINDOW.blit(background, (0,0))
+    text = calibri.render('Score: ' + str(score), 1, (0,0,0))
+    GAME_WINDOW.blit(text, (390, 10))
     hero.draw(GAME_WINDOW)
     for enemy in enemy_list:
         enemy.draw(GAME_WINDOW)
@@ -30,9 +32,13 @@ for i in range(1):
 
 #collection of instances from the Projectile class
 bullets = [] #list for keeping track of all bullet sprites
+
+
+calibri = pygame.font.SysFont('calibri', 24, True) #can't be in game_variables because must be in file where pygame.init() called
 #MAIN GAME LOOP
 def main_game_loop():
     """Runs the main game loop, looking for input from the user."""
+    global score
     run = True
     while run:
         clock.tick(GAME_DELAY)
@@ -46,11 +52,10 @@ def main_game_loop():
 
         for bullet in bullets:
             for goblin in enemy_list:
-                if (bullet.y_coord - bullet.radius < goblin.hitbox[1] + goblin.hitbox[3] and 
-                    bullet.y_coord + bullet.radius > goblin.hitbox[1]):
-                    if (bullet.x_coord + bullet.radius > goblin.hitbox[0] and
-                        bullet.x_coord - bullet.radius < goblin.hitbox[0] + goblin.hitbox[2]):
+                if (bullet.y_coord - bullet.radius < goblin.hitbox[1] + goblin.hitbox[3] and bullet.y_coord + bullet.radius > goblin.hitbox[1]):
+                    if (bullet.x_coord + bullet.radius > goblin.hitbox[0] and bullet.x_coord - bullet.radius < goblin.hitbox[0] + goblin.hitbox[2]):
                         goblin.hit()
+                        score += 1
                         bullets.pop(bullets.index(bullet))
             if bullet.x_coord < 500 and bullet.x_coord > 0:
                 bullet.x_coord += bullet.velocity
@@ -65,8 +70,7 @@ def main_game_loop():
             else:
                 facing = 1
             if len(bullets) < 7:
-                bullets.append(Projectile(round(hero.x_coord + hero.width//2), 
-                round(hero.y_coord + hero.height//2), PROJECTILE_DIAMETER, (153,0,0), facing))
+                bullets.append(Projectile(round(hero.x_coord + hero.width//2), round(hero.y_coord + hero.height//2), PROJECTILE_DIAMETER, (153,0,0), facing))
             shooting = False
 
         if keys[pygame.K_LEFT] and hero.x_coord > hero.velocity:
