@@ -51,6 +51,5 @@ while run:
             bullets_list.pop(bullets_list.index(item))
 
     pygame.display.update()
-    print(bullets_list)
 
 pygame.quit()
