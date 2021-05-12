@@ -1,10 +1,17 @@
 import pygame, random
+
+from pygame.constants import JOYBUTTONDOWN
 from game_variables import *
 from player_class import Player
 from enemy_class import Enemy
 from projectile_class import Projectile
 
 pygame.init()
+pygame.joystick.init()
+
+joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+for joystick in joysticks:
+    print(joystick)
 
 pygame.display.set_caption("Change This Title Later")
 
@@ -46,6 +53,8 @@ def main_game_loop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+            if event.type == JOYBUTTONDOWN:
+                pass
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     shooting = True
