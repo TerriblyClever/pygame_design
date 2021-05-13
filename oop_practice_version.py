@@ -103,15 +103,7 @@ def main_game_loop():
                 hero.left = False
                 hero.walk_count = 0
         else:
-            if hero.jump_count >= -7:
-                neg = 1
-                if hero.jump_count < 0:
-                    neg = -1
-                hero.y_coord -= (hero.jump_count ** 2) * neg
-                hero.jump_count -= 1
-            else:
-                hero.is_jump = False
-                hero.jump_count = 7
+            hero.jump()
         redraw_game_window()
     pygame.quit()
 
