@@ -50,3 +50,16 @@ class Player(object):
         self.hitbox = (self.x_coord + 17, self.y_coord + 11, 26, 57)
         #draw the hitbox as a rectangle in the game window, around the player (WHHS Red)
         pygame.draw.rect(game_window, (153,0,0), self.hitbox, 2)
+
+    def jump(self):
+        """Class method for player jumping action."""
+        if self.jump_count >= -7:
+            neg = 1
+            if self.jump_count < 0:
+                neg = -1
+            self.y_coord -= (self.jump_count ** 2) * neg
+            self.jump_count -= 1
+        else:
+            self.is_jump = False
+            self.jump_count = 7
+        
