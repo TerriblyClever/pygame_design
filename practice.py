@@ -30,6 +30,8 @@ color_increment = 5
 is_jump = False #Boolean to detect whether the sprite is in a jump
 moving_right = False
 moving_left = False 
+moving_up = False
+moving_down = False
 jump_count = 5 #controls the height of your jump 
 jump_increment = 5
 
@@ -70,12 +72,24 @@ while run:
                 else:
                     moving_right = False
                     moving_left = False
+            if event.axis == 1:
+                print(event.value)
+                if event.value > 0.1:
+                    moving_down = True
+                    moving_up = False 
+                elif event.value < -0.1:
+                    moving_up = True
+                    moving_down = False
+                else:
+                    moving_up = False
+                    moving_down = False
         if event.type == JOYHATMOTION and event.value == (1,0):
             velocity += 5
             print("Velocity", velocity)
         elif event.type == JOYHATMOTION and event.value == (-1, 0):
             velocity -= 5
             print("Velocity", velocity)
+
     keys = pygame.key.get_pressed()
 
     if red_loop:
@@ -104,10 +118,24 @@ while run:
         red_value, green_value, blue_value = color_floor, color_floor, color_floor
         red_loop, green_loop, blue_loop = True, False, False
 
-    if moving_left:
+    if x_center <= 0:
+        x_center = 5
+    elif x_center > (game_window_x - width - 5):
+        x_center = (game_window_x - width - 5)
+    if moving_left and x_center > 5:
         x_center -= velocity
-    if moving_right:
+    if moving_right and x_center < (game_window_x - width - 5):
         x_center += velocity
+
+    if y_center <= 0:
+        y_center = 5
+    elif y_center > (game_window_y - height - 5):
+        y_center = (game_window_y - height - 5)
+    if moving_up and y_center > 5:
+        y_center -= velocity
+    if moving_down and y_center < (game_window_y - height - 5):
+        y_center += velocity
+    
 
     if is_jump: #will run when is_jump = False
         if jump_count >= -jump_increment:
